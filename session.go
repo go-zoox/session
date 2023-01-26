@@ -28,7 +28,7 @@ type session struct {
 	//
 	// Crypto aes.Aes
 	Crypto *aes.CFB
-	Secret string
+	Secret []byte
 	//
 	isParsed bool
 	data     map[string]interface{}
@@ -76,7 +76,7 @@ func New(cookie cookie.Cookie, secret string, cfg ...*Config) Session {
 		Crypto: crypto,
 		// 32 => aes-256-cfb
 		// why use md5: ensure length 32 => 256 bit for aes 256-cfb
-		Secret: md5.Md5(secret),
+		Secret: []byte(md5.Md5(secret)),
 		// initialize data
 		data: map[string]interface{}{
 			"timestamp": time.Now().Format("2006-01-02 15:04:05"),
@@ -128,7 +128,7 @@ func (s *session) parse() error {
 		return nil
 	}
 
-	sessionTokenRaw, err := s.Crypto.Decrypt([]byte(sessionToken), []byte(s.Secret))
+	sessionTokenRaw, err := s.Crypto.Decrypt([]byte(sessionToken), s.Secret)
 	if err != nil {
 		return fmt.Errorf("invlaid session(error: %s)", err)
 	}
@@ -155,7 +155,7 @@ func (s *session) flush() error {
 		return errors.Wrap(err, "failed to stringify raw session token")
 	}
 
-	sessionToken, err := s.Crypto.Encrypt([]byte(sessionTokenRaw), []byte(s.Secret))
+	sessionToken, err := s.Crypto.Encrypt([]byte(sessionTokenRaw), s.Secret)
 	if err != nil {
 		return errors.Wrap(err, "failed to generate session token")
 	}
