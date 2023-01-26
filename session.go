@@ -77,6 +77,10 @@ func New(cookie cookie.Cookie, secret string, cfg ...*Config) Session {
 		// 32 => aes-256-cfb
 		// why use md5: ensure length 32 => 256 bit for aes 256-cfb
 		Secret: md5.Md5(secret),
+		// initialize data
+		data: map[string]interface{}{
+			"timestamp": time.Now().Format("2006-01-02 15:04:05"),
+		},
 	}
 }
 
