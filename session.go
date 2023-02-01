@@ -14,7 +14,7 @@ import (
 // Session ...
 type Session interface {
 	// Set sets response session with the given name and value.
-	Set(name string, value string, maxAge time.Duration)
+	Set(name string, value string)
 	// Get gets request session with the given name.
 	Get(name string) string
 	// Del deletes response session with the given name.
@@ -85,7 +85,7 @@ func New(cookie cookie.Cookie, secret string, cfg ...*Config) Session {
 }
 
 // Set sets response session with the given name and value.
-func (s *session) Set(key string, value string, maxAge time.Duration) {
+func (s *session) Set(key string, value string) {
 	s.parse()
 
 	s.data[key] = value
