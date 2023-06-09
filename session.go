@@ -35,14 +35,7 @@ type session struct {
 }
 
 // Config is the optional session config.
-type Config struct {
-	MaxAge time.Duration
-	// coookie
-	Path     string
-	Domain   string
-	Secure   bool
-	HTTPOnly bool
-}
+type Config = cookie.Config
 
 // New creates a session getter and setter.
 func New(cookie cookie.Cookie, secret string, cfg ...*Config) Session {
@@ -160,6 +153,6 @@ func (s *session) flush() error {
 		return errors.Wrap(err, "failed to generate session token")
 	}
 
-	s.Cookie.Set(DefaultCookieKey, string(sessionToken), s.Cfg.MaxAge)
+	s.Cookie.Set(DefaultCookieKey, string(sessionToken), s.Cfg)
 	return nil
 }
